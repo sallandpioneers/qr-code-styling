@@ -386,6 +386,7 @@ export default class QRSVG {
     const dh = height - options.imageOptions.margin * 2;
 
     const image = document.createElementNS("http://www.w3.org/2000/svg", "image");
+    console.log("options.image", options.image);
     image.setAttribute("href", options.image || "");
     image.setAttribute("x", String(dx));
     image.setAttribute("y", String(dy));

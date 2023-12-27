@@ -175,9 +175,13 @@ export default class QRDot {
   }
 
   _drawDiamond({ x, y, size }: DrawArgs): void {
-    x = x + 6;
-    y = y + 6;
-    size = size - 12;
+    x = x + 7;
+    y = y + 7;
+    size = size - 14;
+    if (size < 8) {
+      size = 8;
+    }
+    console.log("Drawing a diamond", x, y, size);
 
     this._basicSquare({ x, y, size, rotation: 45 });
   }
