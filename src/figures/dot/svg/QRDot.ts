@@ -14,7 +14,7 @@ export default class QRDot {
   draw(x: number, y: number, size: number, getNeighbor: GetNeighbor): void {
     const type = this._type;
     let drawFunction;
-
+    // console.log('dot type', type)
     switch (type) {
       case dotTypes.dots:
         drawFunction = this._drawDot;
@@ -73,7 +73,7 @@ export default class QRDot {
 
   _basicSquare(args: BasicFigureDrawArgs): void {
     const { size, x, y } = args;
-
+    // console.log('sq')
     this._rotateFigure({
       ...args,
       draw: () => {

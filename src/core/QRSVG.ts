@@ -356,6 +356,7 @@ export default class QRSVG {
         });
       }
 
+      // console.log('cst', options.cornersDotOptions?.type)
       if (options.cornersDotOptions?.type) {
         const cornersDot = new QRCornerDot({ svg: this._element, type: options.cornersDotOptions.type });
 

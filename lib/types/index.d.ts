@@ -1,7 +1,7 @@
 export interface UnknownObject {
     [key: string]: any;
 }
-export declare type DotType = "dots" | "rounded" | "classy" | "classy-rounded" | "square" | "extra-rounded";
+export declare type DotType = "dots" | "rounded" | "classy" | "classy-rounded" | "square" | "extra-rounded" | "diamond";
 export declare type CornerDotType = "dot" | "square";
 export declare type CornerSquareType = "dot" | "square" | "extra-rounded";
 export declare type Extension = "svg" | "png" | "jpeg" | "webp";
