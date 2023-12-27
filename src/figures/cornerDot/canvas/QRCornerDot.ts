@@ -11,6 +11,7 @@ export default class QRCornerDot {
   }
 
   draw(x: number, y: number, size: number, rotation: number): void {
+    // console.log('drawing')
     const context = this._context;
     const type = this._type;
     let drawFunction;
