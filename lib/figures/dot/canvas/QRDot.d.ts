@@ -17,8 +17,10 @@ export default class QRDot {
     _basicCornersExtraRounded(args: BasicFigureDrawArgsCanvas): void;
     _drawDot({ x, y, size, context }: DrawArgsCanvas): void;
     _drawSquare({ x, y, size, context }: DrawArgsCanvas): void;
+    _drawDiamond({ x, y, size, context }: DrawArgsCanvas): void;
     _drawRounded({ x, y, size, context, getNeighbor }: DrawArgsCanvas): void;
     _drawExtraRounded({ x, y, size, context, getNeighbor }: DrawArgsCanvas): void;
     _drawClassy({ x, y, size, context, getNeighbor }: DrawArgsCanvas): void;
     _drawClassyRounded({ x, y, size, context, getNeighbor }: DrawArgsCanvas): void;
+    _degreeToRadian(degree: number): number;
 }

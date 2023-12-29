@@ -181,7 +181,7 @@ export default class QRDot {
     if (size < 8) {
       size = 8;
     }
-    console.log("Drawing a diamond", x, y, size);
+    console.log("Drawing a diamond on svg", x, y, size);
 
     this._basicSquare({ x, y, size, rotation: 45 });
   }

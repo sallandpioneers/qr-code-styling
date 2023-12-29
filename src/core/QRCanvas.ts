@@ -310,7 +310,8 @@ export default class QRCanvas {
         canvasContext.beginPath();
         cornersDot.draw(x + dotSize * 2, y + dotSize * 2, cornersDotSize, rotation);
       } else {
-        const dot = new QRDot({ context: canvasContext, type: options.dotsOptions.type });
+        const dotType = options.dotsOptions.type === "diamond" ? "square" : options.dotsOptions.type;
+        const dot = new QRDot({ context: canvasContext, type: dotType });
 
         canvasContext.beginPath();
 
