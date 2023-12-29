@@ -37,6 +37,9 @@ export default class QRDot {
       case dotTypes.extraRounded:
         drawFunction = this._drawExtraRounded;
         break;
+      case dotTypes.diamond:
+        drawFunction = this._drawDiamond;
+        break;
       case dotTypes.square:
       default:
         drawFunction = this._drawSquare;
@@ -158,6 +161,18 @@ export default class QRDot {
 
   _drawSquare({ x, y, size, context }: DrawArgsCanvas): void {
     this._basicSquare({ x, y, size, context, rotation: 0 });
+  }
+
+  _drawDiamond({ x, y, size, context }: DrawArgsCanvas): void {
+    x = x + 7;
+    y = y + 7;
+    size = size - 14;
+    if (size < 8) {
+      size = 8;
+    }
+    console.log("Drawing a diamond on canvas", x, y, size);
+
+    this._basicSquare({ x, y, size, context, rotation: this._degreeToRadian(45) });
   }
 
   _drawRounded({ x, y, size, context, getNeighbor }: DrawArgsCanvas): void {
@@ -308,5 +323,9 @@ export default class QRDot {
     }
 
     this._basicSquare({ x, y, size, context, rotation: 0 });
+  }
+
+  _degreeToRadian(degree: number): number {
+    return (degree * Math.PI) / 180;
   }
 }
