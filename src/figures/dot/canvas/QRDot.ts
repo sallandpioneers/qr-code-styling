@@ -40,6 +40,9 @@ export default class QRDot {
       case dotTypes.diamond:
         drawFunction = this._drawDiamond;
         break;
+      case dotTypes.smallSquare:
+        drawFunction = this._drawSmallSquare;
+        break;
       case dotTypes.square:
       default:
         drawFunction = this._drawSquare;
@@ -160,6 +163,16 @@ export default class QRDot {
   }
 
   _drawSquare({ x, y, size, context }: DrawArgsCanvas): void {
+    this._basicSquare({ x, y, size, context, rotation: 0 });
+  }
+
+  _drawSmallSquare({ x, y, size, context }: DrawArgsCanvas): void {
+    const originalSize = size;
+
+    size = originalSize * 0.7;
+    x = x + originalSize * 0.15;
+    y = y + originalSize * 0.15;
+
     this._basicSquare({ x, y, size, context, rotation: 0 });
   }
 
