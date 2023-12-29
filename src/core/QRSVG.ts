@@ -368,8 +368,10 @@ export default class QRSVG {
           this._cornerDots.appendChild(cornersDot._element);
         }
       } else {
-        // const dot = new QRDot({ svg: this._element, type: options.dotsOptions.type });
-        const dotType = options.dotsOptions.type === "diamond" ? "square" : options.dotsOptions.type;
+        const dotTypesToShowSquaresFor = ["diamond", "small-square"];
+        const dotType = dotTypesToShowSquaresFor.includes(options.dotsOptions.type)
+          ? "square"
+          : options.dotsOptions.type;
         const dot = new QRDot({ svg: this._element, type: dotType });
 
         for (let i = 0; i < dotMask.length; i++) {
