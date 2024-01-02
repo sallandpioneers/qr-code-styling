@@ -35,17 +35,19 @@
                   }]
                 },
               },
-            },
-            imageOptions: {
-              crossOrigin: "anonymous",
-              margin: 30
-            }
-          };
-        const qrCode = new QRCodeStyling(options);
-        const qrCode2 = new QRCodeStyling({
-          ...options,
-          type: 'svg',
-        });
+              cornersDotOptions: {
+                type: "outpoint",
+              },
+              imageOptions: {
+                crossOrigin: "anonymous",
+                margin: 30
+              }
+            };
+          const qrCode = new QRCodeStyling(options);
+          const qrCode2 = new QRCodeStyling({
+            ...options,
+            type: 'svg',
+          });
 
             qrCode.append(document.getElementById("canvas")); //canvas
             qrCode2.append(document.getElementById("canvas2")); //svg
