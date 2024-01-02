@@ -17,6 +17,9 @@ export default class QRCornerDot {
     let drawFunction;
 
     switch (type) {
+      case cornerDotTypes.outpoint:
+        drawFunction = this._drawOutpoint;
+        break;
       case cornerDotTypes.square:
         drawFunction = this._drawSquare;
         break;
@@ -62,11 +65,35 @@ export default class QRCornerDot {
     });
   }
 
+  // TODO: The inner eyes for the canvas are slightly more rounded than the ones for SVG
+  _basicOutpoint(args: BasicFigureDrawArgsCanvas): void {
+    const { size, context } = args;
+    const dotSize = size / 7;
+
+    this._rotateFigure({
+      ...args,
+      draw: () => {
+        context.lineTo(3.5 * -dotSize, 3.5 * -dotSize);
+        context.lineTo(dotSize, -3.5 * dotSize);
+        context.arc(dotSize, -dotSize, 2.5 * dotSize, -Math.PI / 2, 0);
+        context.lineTo(3.5 * dotSize, -dotSize);
+        context.arc(dotSize, dotSize, 2.5 * dotSize, 0, Math.PI / 2);
+        context.lineTo(-dotSize, 3.5 * dotSize);
+        context.arc(-dotSize, dotSize, 2.5 * dotSize, Math.PI / 2, Math.PI);
+        context.lineTo(-3.5 * dotSize, -dotSize);
+      }
+    });
+  }
+
   _drawDot({ x, y, size, context, rotation }: DrawArgsCanvas): void {
     this._basicDot({ x, y, size, context, rotation });
   }
 
   _drawSquare({ x, y, size, context, rotation }: DrawArgsCanvas): void {
     this._basicSquare({ x, y, size, context, rotation });
+  }
+
+  _drawOutpoint({ x, y, size, context, rotation }: DrawArgsCanvas): void {
+    this._basicOutpoint({ x, y, size, context, rotation });
   }
 }
