@@ -2,7 +2,7 @@ export interface UnknownObject {
     [key: string]: any;
 }
 export declare type DotType = "dots" | "rounded" | "classy" | "classy-rounded" | "small-square" | "square" | "extra-rounded" | "diamond";
-export declare type CornerDotType = "dot" | "square" | "outpoint";
+export declare type CornerDotType = "dot" | "square" | "outpoint" | "inpoint";
 export declare type CornerSquareType = "dot" | "square" | "extra-rounded" | "outpoint";
 export declare type Extension = "svg" | "png" | "jpeg" | "webp";
 export declare type GradientType = "radial" | "linear";

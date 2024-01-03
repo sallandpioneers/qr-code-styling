@@ -11,7 +11,9 @@ export default class QRCornerDot {
     _basicDot(args: BasicFigureDrawArgsCanvas): void;
     _basicSquare(args: BasicFigureDrawArgsCanvas): void;
     _basicOutpoint(args: BasicFigureDrawArgsCanvas): void;
+    _basicInpoint(args: BasicFigureDrawArgsCanvas): void;
     _drawDot({ x, y, size, context, rotation }: DrawArgsCanvas): void;
     _drawSquare({ x, y, size, context, rotation }: DrawArgsCanvas): void;
     _drawOutpoint({ x, y, size, context, rotation }: DrawArgsCanvas): void;
+    _drawInpoint({ x, y, size, context, rotation }: DrawArgsCanvas): void;
 }
