@@ -16,6 +16,12 @@ export default class QRCornerDot {
     let drawFunction;
 
     switch (type) {
+      case cornerDotTypes.inpoint:
+        drawFunction = this._drawInpoint;
+        break;
+      case cornerDotTypes.outpoint:
+        drawFunction = this._drawOutpoint;
+        break;
       case cornerDotTypes.square:
         drawFunction = this._drawSquare;
         break;
@@ -64,11 +70,69 @@ export default class QRCornerDot {
     });
   }
 
+  _basicOutpoint(args: BasicFigureDrawArgs): void {
+    const { size, x, y } = args;
+    const dotSize = size;
+
+    this._rotateFigure({
+      ...args,
+      draw: () => {
+        this._element = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        this._element.setAttribute("clip-rule", "evenodd");
+        this._element.setAttribute(
+          "d",
+          `M ${x} ${y + dotSize / 2}` +
+            `v ${dotSize / 4}` +
+            `a ${dotSize / 4}, ${dotSize / 4} 0 0 0 ${dotSize / 4}, ${dotSize / 4}` +
+            `h ${dotSize / 2}` +
+            `a ${dotSize / 4}, ${dotSize / 4} 0 0 0 ${dotSize / 4}, ${-dotSize / 4}` +
+            `v ${-dotSize / 2}` +
+            `a ${dotSize / 4}, ${dotSize / 4} 0 0 0 ${-dotSize / 4}, ${-dotSize / 4}` +
+            `h ${(-dotSize / 4) * 3}` +
+            `z`
+        );
+      }
+    });
+  }
+
+  _basicInpoint(args: BasicFigureDrawArgs): void {
+    const { size, x, y } = args;
+    const dotSize = size;
+
+    this._rotateFigure({
+      ...args,
+      draw: () => {
+        this._element = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        this._element.setAttribute("clip-rule", "evenodd");
+        this._element.setAttribute(
+          "d",
+          `M ${x} ${y + dotSize / 2}` +
+            `v ${dotSize / 4}` +
+            `a ${dotSize / 4}, ${dotSize / 4} 0 0 0 ${dotSize / 4}, ${dotSize / 4}` +
+            `h ${(dotSize / 4) * 3}` +
+            `v ${(-dotSize / 4) * 3}` +
+            `a ${dotSize / 4}, ${dotSize / 4} 0 0 0 ${-dotSize / 4}, ${-dotSize / 4}` +
+            `h ${-dotSize / 2}` +
+            `a ${dotSize / 4}, ${dotSize / 4} 0 0 0 ${-dotSize / 4}, ${dotSize / 4}` +
+            `z`
+        );
+      }
+    });
+  }
+
   _drawDot({ x, y, size, rotation }: DrawArgs): void {
     this._basicDot({ x, y, size, rotation });
   }
 
   _drawSquare({ x, y, size, rotation }: DrawArgs): void {
     this._basicSquare({ x, y, size, rotation });
+  }
+
+  _drawInpoint({ x, y, size, rotation }: DrawArgs): void {
+    this._basicInpoint({ x, y, size, rotation });
+  }
+
+  _drawOutpoint({ x, y, size, rotation }: DrawArgs): void {
+    this._basicOutpoint({ x, y, size, rotation });
   }
 }

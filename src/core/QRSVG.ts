@@ -400,7 +400,11 @@ export default class QRSVG {
           cornersDotClipPath.appendChild(cornersDot._element);
         }
       } else {
-        const dot = new QRDot({ svg: this._element, type: options.dotsOptions.type });
+        const dotTypesToShowSquaresFor = ["diamond", "small-square"];
+        const dotType = dotTypesToShowSquaresFor.includes(options.dotsOptions.type)
+          ? "square"
+          : options.dotsOptions.type;
+        const dot = new QRDot({ svg: this._element, type: dotType });
 
         for (let i = 0; i < dotMask.length; i++) {
           for (let j = 0; j < dotMask[i].length; j++) {
@@ -465,6 +469,8 @@ export default class QRSVG {
     const dh = height - options.imageOptions.margin * 2;
 
     const image = document.createElementNS("http://www.w3.org/2000/svg", "image");
+
+    image.setAttribute("href", options.image || "");
     image.setAttribute("x", String(dx));
     image.setAttribute("y", String(dy));
     image.setAttribute("width", `${dw}px`);

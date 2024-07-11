@@ -14,7 +14,6 @@ export default class QRDot {
   draw(x: number, y: number, size: number, getNeighbor: GetNeighbor): void {
     const type = this._type;
     let drawFunction;
-
     switch (type) {
       case dotTypes.dots:
         drawFunction = this._drawDot;
@@ -31,6 +30,12 @@ export default class QRDot {
       case dotTypes.extraRounded:
         drawFunction = this._drawExtraRounded;
         break;
+      case dotTypes.diamond:
+        drawFunction = this._drawDiamond;
+        break;
+      case dotTypes.smallSquare:
+        drawFunction = this._drawSmallSquare;
+        break;
       case dotTypes.square:
       default:
         drawFunction = this._drawSquare;
@@ -44,7 +49,14 @@ export default class QRDot {
     const cy = y + size / 2;
 
     draw();
-    this._element?.setAttribute("transform", `rotate(${(180 * rotation) / Math.PI},${cx},${cy})`);
+
+    let rotationAttr = `rotate(${(180 * rotation) / Math.PI},${cx},${cy})`;
+
+    if (this._type === "diamond") {
+      rotationAttr = `rotate(${rotation},${cx},${cy})`;
+    }
+
+    this._element?.setAttribute("transform", rotationAttr);
   }
 
   _basicDot(args: BasicFigureDrawArgs): void {
@@ -63,7 +75,6 @@ export default class QRDot {
 
   _basicSquare(args: BasicFigureDrawArgs): void {
     const { size, x, y } = args;
-
     this._rotateFigure({
       ...args,
       draw: () => {
@@ -161,6 +172,27 @@ export default class QRDot {
 
   _drawSquare({ x, y, size }: DrawArgs): void {
     this._basicSquare({ x, y, size, rotation: 0 });
+  }
+
+  _drawSmallSquare({ x, y, size }: DrawArgs): void {
+    const originalSize = size;
+
+    size = originalSize * 0.7;
+    x = x + originalSize * 0.15;
+    y = y + originalSize * 0.15;
+
+    this._basicSquare({ x, y, size, rotation: 0 });
+  }
+
+  _drawDiamond({ x, y, size }: DrawArgs): void {
+    x = x + 7;
+    y = y + 7;
+    size = size - 14;
+    if (size < 8) {
+      size = 8;
+    }
+
+    this._basicSquare({ x, y, size, rotation: 45 });
   }
 
   _drawRounded({ x, y, size, getNeighbor }: DrawArgs): void {
