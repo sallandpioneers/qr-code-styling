@@ -39,6 +39,7 @@ export default class QRDot {
         break;
       case dotTypes.square:
       default:
+        console.log("DEFAULT: ", type)
         drawFunction = this._drawSquare;
     }
 
@@ -347,5 +348,9 @@ export default class QRDot {
     }
 
     this._basicSquare({ x, y, size, rotation: 0 });
+  }
+  
+  _degreeToRadian(degree: number): number {
+    return (degree * Math.PI) / 180;
   }
 }
