@@ -56,11 +56,8 @@
       cornerSquareTypesOptions.forEach((cornerSquareTypesOptions, i) => {
       cornerDotOptions.forEach((cornerDotOption, i) => {
         dotOptions.forEach((dotOption, i) => {
-          options["dotsOptions"] = {
-            type: dotOptions[i],
-            color: color[i]
-          };
-
+          options.dotsOptions.type = dotOption;
+          options.dotsOptions.color = color[i];
           options.cornersDotOptions.type = cornerDotOption;
           options.cornersSquareOptions.type = cornerSquareTypesOptions;
 

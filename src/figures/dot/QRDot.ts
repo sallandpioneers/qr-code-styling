@@ -344,8 +344,4 @@ export default class QRDot {
 
     this._basicSquare({ x, y, size, rotation: 0 });
   }
-  
-  _degreeToRadian(degree: number): number {
-    return (degree * Math.PI) / 180;
-  }
 }
