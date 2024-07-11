@@ -391,7 +391,6 @@ export default class QRSVG {
         });
       }
 
-      // console.log('cst', options.cornersDotOptions?.type)
       if (options.cornersDotOptions?.type) {
         const cornersDot = new QRCornerDot({ svg: this._element, type: options.cornersDotOptions.type });
 
@@ -471,7 +470,6 @@ export default class QRSVG {
 
     const image = document.createElementNS("http://www.w3.org/2000/svg", "image");
 
-    console.log("options.image", options.image);
     image.setAttribute("href", options.image || "");
     image.setAttribute("x", String(dx));
     image.setAttribute("y", String(dy));
