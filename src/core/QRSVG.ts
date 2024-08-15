@@ -74,8 +74,7 @@ export default class QRSVG {
   async drawQR(qr: QRCode): Promise<void> {
     const count = qr.getModuleCount();
     const minSize = Math.min(this._options.width, this._options.height) - this._options.margin * 2;
-    const realQRSize = this._options.shape === shapeTypes.circle ? minSize / Math.sqrt(2) : minSize;
-    const dotSize = realQRSize / count;
+    const dotSize = minSize / count;
     let drawImageSize = {
       hideXDots: 0,
       hideYDots: 0,
@@ -92,6 +91,9 @@ export default class QRSVG {
       const { imageOptions, qrOptions } = this._options;
       const coverLevel = imageOptions.imageSize * errorCorrectionPercents[qrOptions.errorCorrectionLevel];
       const maxHiddenDots = Math.floor(coverLevel * count * count);
+
+      const realQRSize = this._options.shape === shapeTypes.circle ? minSize / Math.sqrt(2) : minSize;
+      const dotSize = realQRSize / count;
 
       drawImageSize = calculateImageSize({
         originalWidth: this._image.width,
