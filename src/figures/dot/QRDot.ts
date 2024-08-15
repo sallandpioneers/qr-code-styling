@@ -175,22 +175,13 @@ export default class QRDot {
   }
 
   _drawSmallSquare({ x, y, size }: DrawArgs): void {
-    const originalSize = size;
-
-    size = originalSize * 0.7;
-    x = x + originalSize * 0.15;
-    y = y + originalSize * 0.15;
+    size = size * 0.7;
 
     this._basicSquare({ x, y, size, rotation: 0 });
   }
 
   _drawDiamond({ x, y, size }: DrawArgs): void {
-    x = x + 7;
-    y = y + 7;
-    size = size - 14;
-    if (size < 8) {
-      size = 8;
-    }
+    size = size * 0.6;
 
     this._basicSquare({ x, y, size, rotation: 45 });
   }
