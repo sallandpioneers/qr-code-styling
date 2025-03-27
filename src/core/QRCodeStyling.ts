@@ -6,13 +6,19 @@ import drawTypes from "../constants/drawTypes";
 
 import defaultOptions, { RequiredOptions } from "./QROptions";
 import sanitizeOptions from "../tools/sanitizeOptions";
-import { FileExtension, QRCode, Options, DownloadOptions, ExtensionFunction } from "../types";
+import { FileExtension, QRCode, Options, DownloadOptions, ExtensionFunction, Window } from "../types";
 import qrcode from "qrcode-generator";
+import getMimeType from "../tools/getMimeType";
+import { Canvas as NodeCanvas, Image } from "canvas";
+
+declare const window: Window;
 
 export default class QRCodeStyling {
   _options: RequiredOptions;
+  _window: Window;
   _container?: HTMLElement;
-  _canvas?: HTMLCanvasElement;
+  _domCanvas?: HTMLCanvasElement;
+  _nodeCanvas?: NodeCanvas;
   _svg?: SVGElement;
   _qr?: QRCode;
   _extension?: ExtensionFunction;
@@ -20,6 +26,11 @@ export default class QRCodeStyling {
   _svgDrawingPromise?: Promise<void>;
 
   constructor(options?: Partial<Options>) {
+    if (options?.jsdom) {
+      this._window = new options.jsdom("", { resources: "usable" }).window;
+    } else {
+      this._window = window;
+    }
     this._options = options ? sanitizeOptions(mergeDeep(defaultOptions, options) as RequiredOptions) : defaultOptions;
     this.update();
   }
@@ -34,7 +45,7 @@ export default class QRCodeStyling {
     if (!this._qr) {
       return;
     }
-    const qrSVG = new QRSVG(this._options);
+    const qrSVG = new QRSVG(this._options, this._window);
 
     this._svg = qrSVG.getElement();
     this._svgDrawingPromise = qrSVG.drawQR(this._qr).then(() => {
@@ -48,32 +59,48 @@ export default class QRCodeStyling {
       return;
     }
 
-    this._canvas = document.createElement("canvas");
-    this._canvas.width = this._options.width;
-    this._canvas.height = this._options.height;
+    if (this._options.nodeCanvas?.createCanvas) {
+      this._nodeCanvas = this._options.nodeCanvas.createCanvas(this._options.width, this._options.height);
+      this._nodeCanvas.width = this._options.width;
+      this._nodeCanvas.height = this._options.height;
+    } else {
+      this._domCanvas = document.createElement("canvas");
+      this._domCanvas.width = this._options.width;
+      this._domCanvas.height = this._options.height;
+    }
 
     this._setupSvg();
     this._canvasDrawingPromise = this._svgDrawingPromise?.then(() => {
       if (!this._svg) return;
 
       const svg = this._svg;
-      const xml = new XMLSerializer().serializeToString(svg);
+      const xml = new this._window.XMLSerializer().serializeToString(svg);
       const svg64 = btoa(xml);
-      const image64 = "data:image/svg+xml;base64," + svg64;
-      const image = new Image();
+      const image64 = `data:${getMimeType('svg')};base64,${svg64}`;
 
-      return new Promise((resolve) => {
-        image.onload = (): void => {
-          this._canvas?.getContext("2d")?.drawImage(image, 0, 0);
-          resolve();
-        };
+      if (this._options.nodeCanvas?.loadImage) {
+        return this._options.nodeCanvas.loadImage(image64).then((image: Image) => {
+          // fix blurry svg
+          image.width = this._options.width;
+          image.height = this._options.height;
+          this._nodeCanvas?.getContext("2d")?.drawImage(image, 0, 0);
+        });
+      } else {
+        const image = new this._window.Image();
 
-        image.src = image64;
-      });
+        return new Promise((resolve) => {
+          image.onload = (): void => {
+            this._domCanvas?.getContext("2d")?.drawImage(image, 0, 0);
+            resolve();
+          };
+
+          image.src = image64;
+        });
+      }
     });
   }
 
-  async _getElement(extension: FileExtension = "png"): Promise<SVGElement | HTMLCanvasElement | undefined> {
+  async _getElement(extension: FileExtension = "png") {
     if (!this._qr) throw "QR code is empty";
 
     if (extension.toLowerCase() === "svg") {
@@ -83,11 +110,11 @@ export default class QRCodeStyling {
       await this._svgDrawingPromise;
       return this._svg;
     } else {
-      if (!this._canvas || !this._canvasDrawingPromise) {
+      if (!(this._domCanvas || this._nodeCanvas) || !this._canvasDrawingPromise) {
         this._setupCanvas();
       }
       await this._canvasDrawingPromise;
-      return this._canvas;
+      return this._domCanvas || this._nodeCanvas;
     }
   }
 
@@ -122,8 +149,8 @@ export default class QRCodeStyling {
     }
 
     if (this._options.type === drawTypes.canvas) {
-      if (this._canvas) {
-        container.appendChild(this._canvas);
+      if (this._domCanvas) {
+        container.appendChild(this._domCanvas);
       }
     } else {
       if (this._svg) {
@@ -148,29 +175,48 @@ export default class QRCodeStyling {
     this.update();
   }
 
-  async getRawData(extension: FileExtension = "png"): Promise<Blob | null> {
+  async getRawData(extension: FileExtension = "png"): Promise<Blob | Buffer | null> {
     if (!this._qr) throw "QR code is empty";
     const element = await this._getElement(extension);
+    const mimeType = getMimeType(extension);
 
     if (!element) {
       return null;
     }
 
-    //A bit trickery to get typescript to behave
-    const lowerCasedExtension = extension.toLocaleLowerCase();
-
-    if (lowerCasedExtension === "svg") {
-      const serializer = new XMLSerializer();
-      const source = serializer.serializeToString(element);
-
-      return new Blob(['<?xml version="1.0" standalone="no"?>\r\n' + source], { type: "image/svg+xml" });
+    if (extension.toLowerCase() === "svg") {
+      const serializer = new this._window.XMLSerializer();
+      const source = serializer.serializeToString(element as SVGElement);
+      const svgString = `<?xml version="1.0" standalone="no"?>\r\n${source}`;
+      if (typeof Blob !== "undefined" && !this._options.jsdom) {
+        return new Blob([svgString], { type: mimeType });
+      } else {
+        return Buffer.from(svgString);
+      }
     } else {
-      return new Promise((resolve) => (element as HTMLCanvasElement).toBlob(resolve, `image/${extension}`, 1));
+      return new Promise((resolve) => {
+        const canvas = element;
+        if ('toBuffer' in canvas) {
+          // Different call is needed to prevent error TS2769: No overload matches this call.
+          if (mimeType === "image/png") {
+            resolve(canvas.toBuffer(mimeType));
+          } else if (mimeType === "image/jpeg") {
+            resolve(canvas.toBuffer(mimeType));
+          } else if (mimeType === "application/pdf") {
+            resolve(canvas.toBuffer(mimeType));
+          } else {
+            throw Error("Unsupported extension");
+          }
+        } else if ('toBlob' in canvas) {
+          (canvas).toBlob(resolve, mimeType, 1);
+        }
+      });
     }
   }
 
-  async download(downloadOptions?: Partial<DownloadOptions>): Promise<void> {
+  async download(downloadOptions?: Partial<DownloadOptions> | string): Promise<void> {
     if (!this._qr) throw "QR code is empty";
+    if (typeof Blob === "undefined") throw "Cannot download in Node.js, call getRawData instead.";
     let extension = "png" as FileExtension;
     let name = "qr";
 
@@ -197,13 +243,13 @@ export default class QRCodeStyling {
 
     if (extension.toLowerCase() === "svg") {
       const serializer = new XMLSerializer();
-      let source = serializer.serializeToString(element);
+      let source = serializer.serializeToString(element as SVGElement);
 
       source = '<?xml version="1.0" standalone="no"?>\r\n' + source;
-      const url = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(source);
+      const url = `data:${getMimeType(extension)};charset=utf-8,${encodeURIComponent(source)}`;
       downloadURI(url, `${name}.svg`);
     } else {
-      const url = (element as HTMLCanvasElement).toDataURL(`image/${extension}`);
+      const url = (element as HTMLCanvasElement).toDataURL(getMimeType(extension));
       downloadURI(url, `${name}.${extension}`);
     }
   }

@@ -17,6 +17,7 @@ export interface RequiredOptions extends Options {
     errorCorrectionLevel: ErrorCorrectionLevel;
   };
   imageOptions: {
+    saveAsBlob: boolean;
     hideBackgroundDots: boolean;
     imageSize: number;
     crossOrigin?: string;
@@ -26,13 +27,13 @@ export interface RequiredOptions extends Options {
     type: DotType;
     color: string;
     gradient?: Gradient;
+    roundSize?: boolean;
   };
   backgroundOptions: {
     round: number;
     color: string;
     gradient?: Gradient;
   };
-  useLegacyDotRotation: boolean;
 }
 
 const defaultOptions: RequiredOptions = {
@@ -48,20 +49,21 @@ const defaultOptions: RequiredOptions = {
     errorCorrectionLevel: errorCorrectionLevels.Q
   },
   imageOptions: {
+    saveAsBlob: true,
     hideBackgroundDots: true,
     imageSize: 0.4,
-    crossOrigin: "anonymous",
+    crossOrigin: undefined,
     margin: 0
   },
   dotsOptions: {
     type: "square",
-    color: "#000"
+    color: "#000",
+    roundSize: true,
   },
   backgroundOptions: {
     round: 0,
     color: "#FFFFFF00"
-  },
-  useLegacyDotRotation: false
+  }
 };
 
 export default defaultOptions;

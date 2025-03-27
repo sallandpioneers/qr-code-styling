@@ -1,3 +1,6 @@
+import { DOMWindow, JSDOM } from "jsdom";
+import nodeCanvas  from "canvas";
+
 export interface UnknownObject {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [key: string]: any;
@@ -12,12 +15,14 @@ export type DotType =
   | "square"
   | "extra-rounded"
   | "diamond";
-export type CornerDotType = "dot" | "square" | "outpoint" | "inpoint";
-export type CornerSquareType = "dot" | "square" | "extra-rounded" | "outpoint";
+export type CornerDotType = "dot" | "square" | "outpoint" | "inpoint"  | DotType;
+export type CornerSquareType = "dot" | "square" | "extra-rounded" | "outpoint"  | DotType;
 export type FileExtension = "svg" | "png" | "jpeg" | "webp";
 export type GradientType = "radial" | "linear";
 export type DrawType = "canvas" | "svg";
 export type ShapeType = "square" | "circle";
+
+export type Window = DOMWindow;
 
 export type Gradient = {
   type: GradientType;
@@ -119,12 +124,15 @@ export type Options = {
   margin?: number;
   data?: string;
   image?: string;
+  nodeCanvas?: typeof nodeCanvas;
+  jsdom?: typeof JSDOM;
   qrOptions?: {
     typeNumber?: TypeNumber;
     mode?: Mode;
     errorCorrectionLevel?: ErrorCorrectionLevel;
   };
   imageOptions?: {
+    saveAsBlob?: boolean;
     hideBackgroundDots?: boolean;
     imageSize?: number;
     crossOrigin?: string;
@@ -134,6 +142,7 @@ export type Options = {
     type?: DotType;
     color?: string;
     gradient?: Gradient;
+    roundSize?: boolean;
   };
   cornersSquareOptions?: {
     type?: CornerSquareType;
@@ -152,7 +161,7 @@ export type Options = {
   };
 };
 
-export type FilterFunction = (i: number, j: number) => boolean;
+export type FilterFunction = (row: number, col: number) => boolean;
 
 export type DownloadOptions = {
   name?: string;
