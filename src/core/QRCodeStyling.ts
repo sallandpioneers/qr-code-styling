@@ -61,6 +61,7 @@ export default class QRCodeStyling {
       const svg64 = btoa(xml);
       const image64 = "data:image/svg+xml;base64," + svg64;
       const image = new Image();
+      image.crossOrigin = "anonymous";
 
       return new Promise((resolve) => {
         image.onload = (): void => {
