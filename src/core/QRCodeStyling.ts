@@ -87,6 +87,7 @@ export default class QRCodeStyling {
         });
       } else {
         const image = new this._window.Image();
+        image.crossOrigin = "anonymous";
 
         return new Promise((resolve) => {
           image.onload = (): void => {
